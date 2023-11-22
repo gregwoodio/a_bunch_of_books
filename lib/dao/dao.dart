@@ -15,17 +15,37 @@ class DAO {
         StreamController<List<models.Reader>>();
 
     db.select(db.reader).watch().listen((data) {
-      ctrl.add(data.map(toModel).toList());
+      ctrl.add(data.map(toReaderModel).toList());
     });
 
     return ctrl.stream;
   }
 
-  models.Reader toModel(ReaderData data) {
+  Stream<List<models.Book>> getBooks() {
+    StreamController<List<models.Book>> ctrl =
+        StreamController<List<models.Book>>();
+
+    db.select(db.book).watch().listen((data) {
+      ctrl.add(data.map(toBookModel).toList());
+    });
+
+    return ctrl.stream;
+  }
+
+  models.Reader toReaderModel(ReaderData data) {
     return models.Reader(
       id: data.id,
       name: data.name,
       image: data.image,
+    );
+  }
+
+  models.Book toBookModel(BookData data) {
+    return models.Book(
+      id: data.id,
+      author: data.author,
+      title: data.title,
+      isbn: data.isbn,
     );
   }
 }
