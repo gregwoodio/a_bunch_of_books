@@ -16,12 +16,14 @@ class Book {
   final int? id;
   final String title;
   final String author;
+  final String? coverImage;
   final String isbn;
 
   Book({
     this.id,
     required this.title,
     required this.author,
+    this.coverImage,
     required this.isbn,
   });
 }

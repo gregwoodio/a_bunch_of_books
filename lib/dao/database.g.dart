@@ -235,13 +235,19 @@ class $BookTable extends Book with TableInfo<$BookTable, BookData> {
   late final GeneratedColumn<String> author = GeneratedColumn<String>(
       'author', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _coverImageMeta =
+      const VerificationMeta('coverImage');
+  @override
+  late final GeneratedColumn<String> coverImage = GeneratedColumn<String>(
+      'cover_image', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _isbnMeta = const VerificationMeta('isbn');
   @override
   late final GeneratedColumn<String> isbn = GeneratedColumn<String>(
       'isbn', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, title, author, isbn];
+  List<GeneratedColumn> get $columns => [id, title, author, coverImage, isbn];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -267,6 +273,12 @@ class $BookTable extends Book with TableInfo<$BookTable, BookData> {
     } else if (isInserting) {
       context.missing(_authorMeta);
     }
+    if (data.containsKey('cover_image')) {
+      context.handle(
+          _coverImageMeta,
+          coverImage.isAcceptableOrUnknown(
+              data['cover_image']!, _coverImageMeta));
+    }
     if (data.containsKey('isbn')) {
       context.handle(
           _isbnMeta, isbn.isAcceptableOrUnknown(data['isbn']!, _isbnMeta));
@@ -288,6 +300,8 @@ class $BookTable extends Book with TableInfo<$BookTable, BookData> {
           .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       author: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}author'])!,
+      coverImage: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cover_image']),
       isbn: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}isbn'])!,
     );
@@ -303,11 +317,13 @@ class BookData extends DataClass implements Insertable<BookData> {
   final int id;
   final String title;
   final String author;
+  final String? coverImage;
   final String isbn;
   const BookData(
       {required this.id,
       required this.title,
       required this.author,
+      this.coverImage,
       required this.isbn});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -315,6 +331,9 @@ class BookData extends DataClass implements Insertable<BookData> {
     map['id'] = Variable<int>(id);
     map['title'] = Variable<String>(title);
     map['author'] = Variable<String>(author);
+    if (!nullToAbsent || coverImage != null) {
+      map['cover_image'] = Variable<String>(coverImage);
+    }
     map['isbn'] = Variable<String>(isbn);
     return map;
   }
@@ -324,6 +343,9 @@ class BookData extends DataClass implements Insertable<BookData> {
       id: Value(id),
       title: Value(title),
       author: Value(author),
+      coverImage: coverImage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(coverImage),
       isbn: Value(isbn),
     );
   }
@@ -335,6 +357,7 @@ class BookData extends DataClass implements Insertable<BookData> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       author: serializer.fromJson<String>(json['author']),
+      coverImage: serializer.fromJson<String?>(json['coverImage']),
       isbn: serializer.fromJson<String>(json['isbn']),
     );
   }
@@ -345,15 +368,22 @@ class BookData extends DataClass implements Insertable<BookData> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'author': serializer.toJson<String>(author),
+      'coverImage': serializer.toJson<String?>(coverImage),
       'isbn': serializer.toJson<String>(isbn),
     };
   }
 
-  BookData copyWith({int? id, String? title, String? author, String? isbn}) =>
+  BookData copyWith(
+          {int? id,
+          String? title,
+          String? author,
+          Value<String?> coverImage = const Value.absent(),
+          String? isbn}) =>
       BookData(
         id: id ?? this.id,
         title: title ?? this.title,
         author: author ?? this.author,
+        coverImage: coverImage.present ? coverImage.value : this.coverImage,
         isbn: isbn ?? this.isbn,
       );
   @override
@@ -362,13 +392,14 @@ class BookData extends DataClass implements Insertable<BookData> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('author: $author, ')
+          ..write('coverImage: $coverImage, ')
           ..write('isbn: $isbn')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, author, isbn);
+  int get hashCode => Object.hash(id, title, author, coverImage, isbn);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -376,6 +407,7 @@ class BookData extends DataClass implements Insertable<BookData> {
           other.id == this.id &&
           other.title == this.title &&
           other.author == this.author &&
+          other.coverImage == this.coverImage &&
           other.isbn == this.isbn);
 }
 
@@ -383,17 +415,20 @@ class BookCompanion extends UpdateCompanion<BookData> {
   final Value<int> id;
   final Value<String> title;
   final Value<String> author;
+  final Value<String?> coverImage;
   final Value<String> isbn;
   const BookCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.author = const Value.absent(),
+    this.coverImage = const Value.absent(),
     this.isbn = const Value.absent(),
   });
   BookCompanion.insert({
     this.id = const Value.absent(),
     required String title,
     required String author,
+    this.coverImage = const Value.absent(),
     required String isbn,
   })  : title = Value(title),
         author = Value(author),
@@ -402,12 +437,14 @@ class BookCompanion extends UpdateCompanion<BookData> {
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? author,
+    Expression<String>? coverImage,
     Expression<String>? isbn,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (author != null) 'author': author,
+      if (coverImage != null) 'cover_image': coverImage,
       if (isbn != null) 'isbn': isbn,
     });
   }
@@ -416,11 +453,13 @@ class BookCompanion extends UpdateCompanion<BookData> {
       {Value<int>? id,
       Value<String>? title,
       Value<String>? author,
+      Value<String?>? coverImage,
       Value<String>? isbn}) {
     return BookCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       author: author ?? this.author,
+      coverImage: coverImage ?? this.coverImage,
       isbn: isbn ?? this.isbn,
     );
   }
@@ -437,6 +476,9 @@ class BookCompanion extends UpdateCompanion<BookData> {
     if (author.present) {
       map['author'] = Variable<String>(author.value);
     }
+    if (coverImage.present) {
+      map['cover_image'] = Variable<String>(coverImage.value);
+    }
     if (isbn.present) {
       map['isbn'] = Variable<String>(isbn.value);
     }
@@ -449,6 +491,7 @@ class BookCompanion extends UpdateCompanion<BookData> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('author: $author, ')
+          ..write('coverImage: $coverImage, ')
           ..write('isbn: $isbn')
           ..write(')'))
         .toString();

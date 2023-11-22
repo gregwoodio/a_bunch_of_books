@@ -45,6 +45,7 @@ class DAO {
       id: data.id,
       author: data.author,
       title: data.title,
+      coverImage: data.coverImage,
       isbn: data.isbn,
     );
   }

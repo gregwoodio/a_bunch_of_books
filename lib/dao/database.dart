@@ -14,6 +14,7 @@ class Book extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get title => text()();
   TextColumn get author => text()();
+  TextColumn get coverImage => text().nullable()();
   TextColumn get isbn => text()();
 }
 
