@@ -1,7 +1,16 @@
+import 'package:a_bunch_of_books/pages/about_page.dart';
+import 'package:a_bunch_of_books/pages/app_page.dart';
+import 'package:a_bunch_of_books/pages/library_page.dart';
+import 'package:a_bunch_of_books/pages/readers_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,32 +37,31 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  int pageIndex = 0;
+  AppPage currentPage = AppPage.readers;
 
   @override
   Widget build(BuildContext context) {
+    Widget body;
+    switch (currentPage) {
+      case AppPage.readers:
+        body = ReadersPage();
+        break;
+      case AppPage.library:
+        body = LibraryPage();
+        break;
+      case AppPage.about:
+        body = AboutPage();
+        break;
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('A Bunch of Books'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'TODO',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Add',
-        child: const Icon(Icons.add),
-      ),
+      body: body,
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: AppPage.values.indexOf(currentPage),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         selectedItemColor: Theme.of(context).colorScheme.inverseSurface,
         unselectedItemColor:
@@ -68,15 +76,15 @@ class _HomePage extends State<HomePage> {
           switch (index) {
             case 0:
               print('Navigate to Readers');
-              setState(() => pageIndex = index);
+              setState(() => currentPage = AppPage.readers);
               break;
             case 1:
               print('Navigate to Library');
-              setState(() => pageIndex = index);
+              setState(() => currentPage = AppPage.library);
               break;
             case 2:
               print('Navigate to About');
-              setState(() => pageIndex = index);
+              setState(() => currentPage = AppPage.about);
               break;
           }
         },
