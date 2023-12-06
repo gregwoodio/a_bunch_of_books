@@ -504,19 +504,19 @@ class $BookReadTable extends BookRead
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $BookReadTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _readerIDMeta =
-      const VerificationMeta('readerID');
+  static const VerificationMeta _readerIdMeta =
+      const VerificationMeta('readerId');
   @override
-  late final GeneratedColumn<int> readerID = GeneratedColumn<int>(
-      'reader_i_d', aliasedName, false,
+  late final GeneratedColumn<int> readerId = GeneratedColumn<int>(
+      'reader_id', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES reader (id)'));
-  static const VerificationMeta _bookIDMeta = const VerificationMeta('bookID');
+  static const VerificationMeta _bookIdMeta = const VerificationMeta('bookId');
   @override
-  late final GeneratedColumn<int> bookID = GeneratedColumn<int>(
-      'book_i_d', aliasedName, false,
+  late final GeneratedColumn<int> bookId = GeneratedColumn<int>(
+      'book_id', aliasedName, false,
       type: DriftSqlType.int,
       requiredDuringInsert: true,
       defaultConstraints:
@@ -528,7 +528,7 @@ class $BookReadTable extends BookRead
       'timestamp', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [readerID, bookID, timestamp];
+  List<GeneratedColumn> get $columns => [readerId, bookId, timestamp];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -539,17 +539,17 @@ class $BookReadTable extends BookRead
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('reader_i_d')) {
-      context.handle(_readerIDMeta,
-          readerID.isAcceptableOrUnknown(data['reader_i_d']!, _readerIDMeta));
+    if (data.containsKey('reader_id')) {
+      context.handle(_readerIdMeta,
+          readerId.isAcceptableOrUnknown(data['reader_id']!, _readerIdMeta));
     } else if (isInserting) {
-      context.missing(_readerIDMeta);
+      context.missing(_readerIdMeta);
     }
-    if (data.containsKey('book_i_d')) {
-      context.handle(_bookIDMeta,
-          bookID.isAcceptableOrUnknown(data['book_i_d']!, _bookIDMeta));
+    if (data.containsKey('book_id')) {
+      context.handle(_bookIdMeta,
+          bookId.isAcceptableOrUnknown(data['book_id']!, _bookIdMeta));
     } else if (isInserting) {
-      context.missing(_bookIDMeta);
+      context.missing(_bookIdMeta);
     }
     if (data.containsKey('timestamp')) {
       context.handle(_timestampMeta,
@@ -566,10 +566,10 @@ class $BookReadTable extends BookRead
   BookReadData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return BookReadData(
-      readerID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}reader_i_d'])!,
-      bookID: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}book_i_d'])!,
+      readerId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}reader_id'])!,
+      bookId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}book_id'])!,
       timestamp: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}timestamp'])!,
     );
@@ -582,24 +582,24 @@ class $BookReadTable extends BookRead
 }
 
 class BookReadData extends DataClass implements Insertable<BookReadData> {
-  final int readerID;
-  final int bookID;
+  final int readerId;
+  final int bookId;
   final String timestamp;
   const BookReadData(
-      {required this.readerID, required this.bookID, required this.timestamp});
+      {required this.readerId, required this.bookId, required this.timestamp});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['reader_i_d'] = Variable<int>(readerID);
-    map['book_i_d'] = Variable<int>(bookID);
+    map['reader_id'] = Variable<int>(readerId);
+    map['book_id'] = Variable<int>(bookId);
     map['timestamp'] = Variable<String>(timestamp);
     return map;
   }
 
   BookReadCompanion toCompanion(bool nullToAbsent) {
     return BookReadCompanion(
-      readerID: Value(readerID),
-      bookID: Value(bookID),
+      readerId: Value(readerId),
+      bookId: Value(bookId),
       timestamp: Value(timestamp),
     );
   }
@@ -608,8 +608,8 @@ class BookReadData extends DataClass implements Insertable<BookReadData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return BookReadData(
-      readerID: serializer.fromJson<int>(json['readerID']),
-      bookID: serializer.fromJson<int>(json['bookID']),
+      readerId: serializer.fromJson<int>(json['readerId']),
+      bookId: serializer.fromJson<int>(json['bookId']),
       timestamp: serializer.fromJson<String>(json['timestamp']),
     );
   }
@@ -617,80 +617,80 @@ class BookReadData extends DataClass implements Insertable<BookReadData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'readerID': serializer.toJson<int>(readerID),
-      'bookID': serializer.toJson<int>(bookID),
+      'readerId': serializer.toJson<int>(readerId),
+      'bookId': serializer.toJson<int>(bookId),
       'timestamp': serializer.toJson<String>(timestamp),
     };
   }
 
-  BookReadData copyWith({int? readerID, int? bookID, String? timestamp}) =>
+  BookReadData copyWith({int? readerId, int? bookId, String? timestamp}) =>
       BookReadData(
-        readerID: readerID ?? this.readerID,
-        bookID: bookID ?? this.bookID,
+        readerId: readerId ?? this.readerId,
+        bookId: bookId ?? this.bookId,
         timestamp: timestamp ?? this.timestamp,
       );
   @override
   String toString() {
     return (StringBuffer('BookReadData(')
-          ..write('readerID: $readerID, ')
-          ..write('bookID: $bookID, ')
+          ..write('readerId: $readerId, ')
+          ..write('bookId: $bookId, ')
           ..write('timestamp: $timestamp')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(readerID, bookID, timestamp);
+  int get hashCode => Object.hash(readerId, bookId, timestamp);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is BookReadData &&
-          other.readerID == this.readerID &&
-          other.bookID == this.bookID &&
+          other.readerId == this.readerId &&
+          other.bookId == this.bookId &&
           other.timestamp == this.timestamp);
 }
 
 class BookReadCompanion extends UpdateCompanion<BookReadData> {
-  final Value<int> readerID;
-  final Value<int> bookID;
+  final Value<int> readerId;
+  final Value<int> bookId;
   final Value<String> timestamp;
   final Value<int> rowid;
   const BookReadCompanion({
-    this.readerID = const Value.absent(),
-    this.bookID = const Value.absent(),
+    this.readerId = const Value.absent(),
+    this.bookId = const Value.absent(),
     this.timestamp = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   BookReadCompanion.insert({
-    required int readerID,
-    required int bookID,
+    required int readerId,
+    required int bookId,
     required String timestamp,
     this.rowid = const Value.absent(),
-  })  : readerID = Value(readerID),
-        bookID = Value(bookID),
+  })  : readerId = Value(readerId),
+        bookId = Value(bookId),
         timestamp = Value(timestamp);
   static Insertable<BookReadData> custom({
-    Expression<int>? readerID,
-    Expression<int>? bookID,
+    Expression<int>? readerId,
+    Expression<int>? bookId,
     Expression<String>? timestamp,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (readerID != null) 'reader_i_d': readerID,
-      if (bookID != null) 'book_i_d': bookID,
+      if (readerId != null) 'reader_id': readerId,
+      if (bookId != null) 'book_id': bookId,
       if (timestamp != null) 'timestamp': timestamp,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
   BookReadCompanion copyWith(
-      {Value<int>? readerID,
-      Value<int>? bookID,
+      {Value<int>? readerId,
+      Value<int>? bookId,
       Value<String>? timestamp,
       Value<int>? rowid}) {
     return BookReadCompanion(
-      readerID: readerID ?? this.readerID,
-      bookID: bookID ?? this.bookID,
+      readerId: readerId ?? this.readerId,
+      bookId: bookId ?? this.bookId,
       timestamp: timestamp ?? this.timestamp,
       rowid: rowid ?? this.rowid,
     );
@@ -699,11 +699,11 @@ class BookReadCompanion extends UpdateCompanion<BookReadData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (readerID.present) {
-      map['reader_i_d'] = Variable<int>(readerID.value);
+    if (readerId.present) {
+      map['reader_id'] = Variable<int>(readerId.value);
     }
-    if (bookID.present) {
-      map['book_i_d'] = Variable<int>(bookID.value);
+    if (bookId.present) {
+      map['book_id'] = Variable<int>(bookId.value);
     }
     if (timestamp.present) {
       map['timestamp'] = Variable<String>(timestamp.value);
@@ -717,8 +717,8 @@ class BookReadCompanion extends UpdateCompanion<BookReadData> {
   @override
   String toString() {
     return (StringBuffer('BookReadCompanion(')
-          ..write('readerID: $readerID, ')
-          ..write('bookID: $bookID, ')
+          ..write('readerId: $readerId, ')
+          ..write('bookId: $bookId, ')
           ..write('timestamp: $timestamp, ')
           ..write('rowid: $rowid')
           ..write(')'))

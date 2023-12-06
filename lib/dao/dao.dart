@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'database.dart';
@@ -14,11 +15,32 @@ class DAO {
     StreamController<List<models.Reader>> ctrl =
         StreamController<List<models.Reader>>();
 
-    db.select(db.reader).watch().listen((data) {
-      ctrl.add(data.map(toReaderModel).toList());
-    });
+    db
+        .customSelect(
+            'SELECT r.*, COUNT(br.reader_id) as booksRead '
+            'FROM reader r '
+            'LEFT JOIN book_read br ON r.id = br.reader_id '
+            'GROUP BY r.id',
+            readsFrom: {
+              db.reader,
+              db.bookRead,
+            })
+        .watch()
+        .listen((row) {
+          ctrl.add(row.map((data) {
+            return toReaderModel(data);
+          }).toList());
+        });
 
     return ctrl.stream;
+  }
+
+  void addReader(models.Reader reader) {
+    db.into(db.reader).insert(
+          ReaderCompanion(
+            name: Value<String>(reader.name),
+          ),
+        );
   }
 
   Stream<List<models.Book>> getBooks() {
@@ -32,11 +54,13 @@ class DAO {
     return ctrl.stream;
   }
 
-  models.Reader toReaderModel(ReaderData data) {
+  models.Reader toReaderModel(QueryRow row) {
+    final data = row.data;
     return models.Reader(
-      id: data.id,
-      name: data.name,
-      image: data.image,
+      id: data['id'],
+      name: data['name'],
+      image: data['image'],
+      booksRead: data['booksRead'],
     );
   }
 
