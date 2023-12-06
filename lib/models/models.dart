@@ -5,10 +5,13 @@ class Reader {
   /// Optional image data
   final String? image;
 
+  final int booksRead;
+
   Reader({
     this.id,
     required this.name,
     this.image,
+    this.booksRead = 0,
   });
 }
 

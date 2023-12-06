@@ -19,8 +19,8 @@ class Book extends Table {
 }
 
 class BookRead extends Table {
-  IntColumn get readerID => integer().references(Reader, #id)();
-  IntColumn get bookID => integer().references(Book, #id)();
+  IntColumn get readerId => integer().references(Reader, #id)();
+  IntColumn get bookId => integer().references(Book, #id)();
   TextColumn get timestamp => text()();
 }
 
