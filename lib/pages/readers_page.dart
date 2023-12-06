@@ -112,13 +112,45 @@ class ReadersPage extends ConsumerWidget {
                           ),
                         )
                       : Container(), // TODO, replace with Image.memory
-                  Column(
-                    children: [
-                      Text(reader.name),
-                      // LinearProgressIndicator(
-                      //  value: ,
-                      // ),
-                    ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(reader.name),
+                          LinearProgressIndicator(
+                            value: reader.booksRead / 1000,
+                          ),
+                          Text(
+                            '${reader.booksRead} of 1000 Read',
+                            textAlign: TextAlign.right,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: const Text('Finished a Book'),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: TextButton(
+                                    onPressed: () {},
+                                    child: const Text('Reading list'),
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               );
