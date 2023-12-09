@@ -2,6 +2,7 @@ import 'package:a_bunch_of_books/pages/about_page.dart';
 import 'package:a_bunch_of_books/pages/app_page.dart';
 import 'package:a_bunch_of_books/pages/library_page.dart';
 import 'package:a_bunch_of_books/pages/readers_page.dart';
+import 'package:a_bunch_of_books/widgets/book_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -29,28 +30,59 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePage();
+  ConsumerState<HomePage> createState() => _HomePage();
 }
 
-class _HomePage extends State<HomePage> {
+class _HomePage extends ConsumerState<HomePage> {
   AppPage currentPage = AppPage.readers;
 
   @override
   Widget build(BuildContext context) {
     Widget body;
+    List<Widget> actions;
     switch (currentPage) {
       case AppPage.readers:
         body = ReadersPage();
+        actions = [];
         break;
       case AppPage.library:
         body = LibraryPage();
+        actions = [
+          IconButton(
+            onPressed: () {
+              showSearch(context: context, delegate: BookSearch(ref));
+            },
+            icon: const Icon(Icons.search),
+          ),
+          PopupMenuButton<String>(
+            onSelected: (String result) {
+              // Sort books
+              // if (result == "Alphabetically") {
+              //   // Sort Alphabetically
+              // } else if (result == "Last Read") {
+              //   // Sort by last read
+              // }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: "Alphabetically",
+                child: Text('Sort Alphabetically'),
+              ),
+              const PopupMenuItem<String>(
+                value: "Last Read",
+                child: Text('Sort by Last Read'),
+              ),
+            ],
+          ),
+        ];
         break;
       case AppPage.about:
         body = AboutPage();
+        actions = [];
         break;
     }
 
@@ -58,6 +90,7 @@ class _HomePage extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('A Bunch of Books'),
+        actions: actions,
       ),
       body: body,
       bottomNavigationBar: BottomNavigationBar(
