@@ -1,4 +1,5 @@
 import 'package:a_bunch_of_books/dao/shared_db.dart';
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,41 +44,48 @@ class Database extends _$Database {
 
         // dummy data
         await m.database.batch((batch) async {
-          batch.insert(reader, ReaderCompanion.insert(name: 'Teddy Ruxpin'));
           batch.insert(
-            book,
+            reader,
+            ReaderCompanion.insert(
+              id: const Value<int>(1),
+              name: 'Teddy Ruxpin',
+            ),
+          );
+
+          final books = [
             BookCompanion.insert(
               title: 'The Very Hungry Caterpillar (Storytime Giants)',
               author: 'Eric Carle',
               isbn: '9780399250453',
             ),
+          ]
+              .mapIndexed(
+                (i, book) => BookCompanion.insert(
+                  id: Value<int>(i),
+                  title: book.title.value,
+                  author: book.author.value,
+                  isbn: book.isbn.value,
+                  coverImage: book.coverImage,
+                ),
+              )
+              .toList();
+
+          batch.insertAll(
+            book,
+            books,
           );
 
-          // final readerRows = await select(reader).get();
-          // final bookRows = await select(book).get();
-
-          batch.insert(
+          batch.insertAll(
               bookRead,
-              BookReadCompanion(
-                bookId: Value<int>(1),
-                readerId: Value<int>(1),
-                timestamp: Value<String>(DateTime.now().toIso8601String()),
+              List.generate(
+                books.length,
+                (index) => BookReadCompanion.insert(
+                  bookId: books[index].id.value,
+                  readerId: 1,
+                  timestamp: DateTime.now().toIso8601String(),
+                ),
               ));
         });
-
-        // final reader = ReaderCompanion.insert(name: 'Teddy Ruxpin');
-        // final book = BookCompanion.insert(
-        //   title: 'The Very Hungry Caterpillar (Storytime Giants)',
-        //   author: 'Eric Carle',
-        //   isbn: '9780399250453',
-        // );
-        // BookReadCompanion.insert(
-        //   readerId: reader.id.value,
-        //   bookId: book.id.value,
-        //   timestamp: DateTime.now().toIso8601String(),
-        // );
-
-        // m.database.batch((batch) => batch.insertAll(reader, ReaderCompanion.insert(name: 'Teddy Ruxpin')))
       },
       onUpgrade: (Migrator m, int from, int to) async {
         // if (from < 2) {
