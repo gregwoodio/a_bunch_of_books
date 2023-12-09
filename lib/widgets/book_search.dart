@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
+import 'book_row.dart';
 
 class BookSearch extends SearchDelegate<Book?> {
   final WidgetRef _ref;
@@ -54,9 +55,6 @@ class BookSearch extends SearchDelegate<Book?> {
       );
     }
 
-    // Add your search terms to your search query and show the results
-    // Get the books from your DAO and filter them with the search query
-    // For this sample, I am returning an empty Container. Replace this with actual search results.
     return FutureBuilder(
       future: _ref.read(daoProvider).searchBooks(query),
       builder: (context, snapshot) {
@@ -68,9 +66,7 @@ class BookSearch extends SearchDelegate<Book?> {
 
         return ListView.builder(
           itemCount: books.length,
-          itemBuilder: (context, i) => Text(
-            books[i].title,
-          ),
+          itemBuilder: (context, i) => BookRow(book: books[i]),
         );
       },
     );
