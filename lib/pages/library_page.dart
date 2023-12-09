@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
+import '../widgets/book_row.dart';
 import '../widgets/book_search.dart';
 
 class LibraryPage extends ConsumerWidget {
@@ -62,13 +63,8 @@ class LibraryPage extends ConsumerWidget {
           final books = snapshot.data!;
 
           return ListView.builder(
-            itemCount: books.length,
-            itemBuilder: (context, index) {
-              final book = books[index];
-
-              return Text(book.title);
-            },
-          );
+              itemCount: books.length,
+              itemBuilder: (context, index) => BookRow(book: books[index]));
         },
       ),
     );
