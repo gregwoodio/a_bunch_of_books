@@ -43,15 +43,31 @@ class DAO {
         );
   }
 
-  Stream<List<models.Book>> getBooks() {
+  Stream<List<models.Book>> getBooks({
+    GeneratedColumn<String>? orderBy,
+    OrderingMode mode = OrderingMode.asc,
+  }) {
     StreamController<List<models.Book>> ctrl =
         StreamController<List<models.Book>>();
 
-    db.select(db.book).watch().listen((data) {
-      ctrl.add(data.map(toBookModel).toList());
-    });
+    orderBy ??= db.book.title;
+
+    db.select(db.book)
+      ..orderBy([
+        (tbl) => OrderingTerm(expression: orderBy!, mode: mode),
+      ])
+      ..watch().listen((data) {
+        ctrl.add(data.map(toBookModel).toList());
+      });
 
     return ctrl.stream;
+  }
+
+  Future<List<models.Book>> searchBooks(String term) async {
+    final query = db.select(db.book)
+      ..where((t) => t.title.contains(term) | t.author.contains(term));
+
+    return query.map(toBookModel).get();
   }
 
   models.Reader toReaderModel(QueryRow row) {
