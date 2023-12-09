@@ -21,10 +21,6 @@ class ReadersPage extends ConsumerWidget {
             return AlertDialog(
               title: const Text('Add Reader'),
               content:
-                  // ConstrainedBox(
-                  //   constraints: BoxConstraints(
-                  //     maxWidth: 200,
-                  //   ),
                   Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
