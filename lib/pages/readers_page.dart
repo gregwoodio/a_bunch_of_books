@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
+import '../widgets/scaffold.dart';
 
 class ReadersPage extends ConsumerWidget {
   late final TextEditingController newReaderController;
@@ -13,53 +14,56 @@ class ReadersPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Add Reader'),
-              content:
-                  Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Name:'),
-                  TextField(
-                    controller: newReaderController,
-                  )
-                ],
-              ),
-              // ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    newReaderController.text = '';
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    final dao = ref.read(daoProvider);
-                    dao.addReader(
-                      Reader(
-                        name: newReaderController.text,
-                      ),
-                    );
-                    newReaderController.text = '';
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('OK'),
-                ),
-              ],
-            );
-          },
-        ),
-        tooltip: 'Add',
-        child: const Icon(Icons.add),
-      ),
+    return ABOBScaffold(
+      actions: [
+        Tooltip(
+          message: 'Add a reader',
+          child: IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Add Reader'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Name:'),
+                      TextField(
+                        controller: newReaderController,
+                      )
+                    ],
+                  ),
+                  // ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        newReaderController.text = '';
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final dao = ref.read(daoProvider);
+                        dao.addReader(
+                          Reader(
+                            name: newReaderController.text,
+                          ),
+                        );
+                        newReaderController.text = '';
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        )
+      ],
       body: StreamBuilder<List<Reader>>(
         stream: ref.read(daoProvider).getReaders(),
         builder: (BuildContext context, AsyncSnapshot<List<Reader>> snapshot) {
