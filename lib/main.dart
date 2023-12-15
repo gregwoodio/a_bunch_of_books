@@ -2,7 +2,6 @@ import 'package:a_bunch_of_books/pages/about_page.dart';
 import 'package:a_bunch_of_books/pages/app_page.dart';
 import 'package:a_bunch_of_books/pages/library_page.dart';
 import 'package:a_bunch_of_books/pages/readers_page.dart';
-import 'package:a_bunch_of_books/widgets/book_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,6 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'A Bunch of Books',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
