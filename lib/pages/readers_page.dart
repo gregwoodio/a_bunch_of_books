@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
+import '../widgets/book_search.dart';
 import '../widgets/scaffold.dart';
 
 class ReadersPage extends ConsumerWidget {
@@ -132,7 +133,23 @@ class ReadersPage extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4),
                                   child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: () async {
+                                      final book = await showSearch(
+                                        context: context,
+                                        delegate: BookSearch(ref),
+                                      );
+
+                                      if (book == null) {
+                                        return;
+                                      }
+
+                                      final dao = ref.read(daoProvider);
+                                      try {
+                                        dao.bookRead(reader, book);
+                                      } catch (error) {
+                                        print(error.toString());
+                                      }
+                                    },
                                     child: const Text('Finished a Book'),
                                   ),
                                 ),

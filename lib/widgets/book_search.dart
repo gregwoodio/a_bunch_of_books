@@ -66,7 +66,10 @@ class BookSearch extends SearchDelegate<Book?> {
 
         return ListView.builder(
           itemCount: books.length,
-          itemBuilder: (context, i) => BookRow(book: books[i]),
+          itemBuilder: (context, i) => GestureDetector(
+            onTap: () => close(context, books[i]),
+            child: BookRow(book: books[i]),
+          ),
         );
       },
     );
