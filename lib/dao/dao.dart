@@ -64,6 +64,12 @@ class DAO {
   }
 
   Future<List<models.Book>> searchBooks(String term) async {
+    if (term.isEmpty) {
+      return db.select(db.book).get().then((list) {
+        return list.map(toBookModel).toList();
+      });
+    }
+
     final query = db.select(db.book)
       ..where((t) => t.title.contains(term) | t.author.contains(term));
 

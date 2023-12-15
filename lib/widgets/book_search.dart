@@ -77,6 +77,18 @@ class BookSearch extends SearchDelegate<Book?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Container();
+    return FutureBuilder(
+      future: _ref.read(daoProvider).searchBooks(''),
+      builder: (context, snapshot) {
+        final books = snapshot.data ?? [];
+        return ListView.builder(
+          itemCount: books.length,
+          itemBuilder: (context, i) => GestureDetector(
+            onTap: () => close(context, books[i]),
+            child: BookRow(book: books[i]),
+          ),
+        );
+      },
+    );
   }
 }
