@@ -70,6 +70,24 @@ class DAO {
     return query.map(toBookModel).get();
   }
 
+  Future<void> bookRead(models.Reader reader, models.Book book) async {
+    if (reader.id == null) {
+      throw ArgumentError('Reader ID is null');
+    }
+
+    if (book.id == null) {
+      throw ArgumentError('Book ID is null');
+    }
+
+    db.into(db.bookRead).insert(
+          BookReadCompanion.insert(
+            readerId: reader.id!,
+            bookId: book.id!,
+            timestamp: DateTime.now().toIso8601String(),
+          ),
+        );
+  }
+
   models.Reader toReaderModel(QueryRow row) {
     final data = row.data;
     return models.Reader(
