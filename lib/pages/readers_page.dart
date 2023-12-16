@@ -133,23 +133,8 @@ class ReadersPage extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4),
                                   child: TextButton(
-                                    onPressed: () async {
-                                      final book = await showSearch(
-                                        context: context,
-                                        delegate: BookSearch(ref),
-                                      );
-
-                                      if (book == null) {
-                                        return;
-                                      }
-
-                                      final dao = ref.read(daoProvider);
-                                      try {
-                                        dao.bookRead(reader, book);
-                                      } catch (error) {
-                                        print(error.toString());
-                                      }
-                                    },
+                                    onPressed: () async =>
+                                        await _bookRead(context, ref, reader),
                                     child: const Text('Finished a Book'),
                                   ),
                                 ),
@@ -176,5 +161,57 @@ class ReadersPage extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  Future<void> _bookRead(
+    BuildContext context,
+    WidgetRef ref,
+    Reader reader,
+  ) async {
+    final book = await showSearch(
+      context: context,
+      delegate: BookSearch(ref),
+    );
+
+    if (book == null) {
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+
+    final confirmed = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('Did you finish \'${book.title}\'?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+                },
+                child: const Text('Yes'),
+              ),
+            ],
+          );
+        });
+
+    if (!confirmed) {
+      return;
+    }
+
+    final dao = ref.read(daoProvider);
+    try {
+      dao.bookRead(reader, book);
+    } catch (error) {
+      print(error.toString());
+    }
   }
 }
