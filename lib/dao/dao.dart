@@ -20,7 +20,7 @@ class DAO {
             'SELECT r.*, COUNT(br.reader_id) as booksRead '
             'FROM reader r '
             'LEFT JOIN book_read br ON r.id = br.reader_id '
-            'GROUP BY r.id',
+            'GROUP BY r.id ',
             readsFrom: {
               db.reader,
               db.bookRead,
