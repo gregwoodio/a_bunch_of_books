@@ -5,10 +5,14 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-LazyDatabase constructDb() {
-  return LazyDatabase(() async {
+import 'database.dart';
+
+Database constructDb() {
+  final db = LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(join(dbFolder.path, 'db.sqlite'));
     return NativeDatabase.createInBackground(file);
   });
+
+  return Database(db);
 }
