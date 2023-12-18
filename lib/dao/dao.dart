@@ -63,6 +63,16 @@ class DAO {
     return ctrl.stream;
   }
 
+  void addBook(models.Book book) {
+    db.into(db.book).insert(
+          BookCompanion(
+            title: Value<String>(book.title),
+            author: Value<String>(book.author),
+            isbn: Value<String>(book.isbn),
+          ),
+        );
+  }
+
   Future<List<models.Book>> searchBooks(String term) async {
     if (term.isEmpty) {
       return db.select(db.book).get().then((list) {

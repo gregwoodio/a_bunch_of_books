@@ -1,11 +1,12 @@
 import 'package:a_bunch_of_books/dao/dao.dart';
+import 'package:a_bunch_of_books/widgets/book_search.dart';
 import 'package:a_bunch_of_books/widgets/scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
 import '../widgets/book_row.dart';
-import '../widgets/book_search.dart';
+import '../widgets/library_search.dart';
 
 class LibraryPage extends ConsumerWidget {
   const LibraryPage({
@@ -16,11 +17,24 @@ class LibraryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ABOBScaffold(
       actions: [
+        // IconButton(
+        //   onPressed: () {
+        //     showSearch(context: context, delegate: LibrarySearch(ref));
+        //   },
+        //   icon: const Icon(Icons.search),
+        // ),
         IconButton(
-          onPressed: () {
-            showSearch(context: context, delegate: BookSearch(ref));
+          onPressed: () async {
+            final book =
+                await showSearch(context: context, delegate: BookSearch(ref));
+
+            if (book == null) {
+              return;
+            }
+
+            ref.read(daoProvider).addBook(book);
           },
-          icon: const Icon(Icons.search),
+          icon: const Icon(Icons.add),
         ),
         PopupMenuButton<String>(
           onSelected: (String result) {

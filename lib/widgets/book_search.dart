@@ -1,44 +1,12 @@
-import 'package:a_bunch_of_books/dao/dao.dart';
+import 'package:a_bunch_of_books/services/open_library_service.dart';
+import 'package:a_bunch_of_books/widgets/library_search.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/models.dart';
 import 'book_row.dart';
 
-class BookSearch extends SearchDelegate<Book?> {
-  final WidgetRef _ref;
-
-  BookSearch(this._ref);
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return <Widget>[
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      )
-    ];
-  }
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context);
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
-      ),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
+// Search OpenLibrary for books
+class BookSearch extends LibrarySearch {
+  BookSearch(super.ref);
 
   @override
   Widget buildResults(BuildContext context) {
@@ -56,15 +24,19 @@ class BookSearch extends SearchDelegate<Book?> {
     }
 
     return FutureBuilder(
-      future: _ref.read(daoProvider).searchBooks(query),
+      future: ref.read(openLibraryService).searchBooks(query),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return const CircularProgressIndicator();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
 
         final books = snapshot.data ?? [];
 
         return ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
           itemCount: books.length,
           itemBuilder: (context, i) => GestureDetector(
             onTap: () => close(context, books[i]),
@@ -77,18 +49,6 @@ class BookSearch extends SearchDelegate<Book?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return FutureBuilder(
-      future: _ref.read(daoProvider).searchBooks(''),
-      builder: (context, snapshot) {
-        final books = snapshot.data ?? [];
-        return ListView.builder(
-          itemCount: books.length,
-          itemBuilder: (context, i) => GestureDetector(
-            onTap: () => close(context, books[i]),
-            child: BookRow(book: books[i]),
-          ),
-        );
-      },
-    );
+    return Container();
   }
 }
