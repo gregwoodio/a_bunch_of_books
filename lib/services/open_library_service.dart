@@ -26,7 +26,24 @@ class OpenLibraryService {
 
     try {
       final json = jsonDecode(response.body);
-      return (json['docs'] as List<dynamic>).map<Book>(Book.fromMap).toList();
+      final docs = json['docs'] as List<dynamic>;
+
+      // TODO: rate limit or lazy load covers
+      final functions = docs.map((elem) => () async {
+            var book = Book.fromMap(elem);
+
+            if (elem['cover_i'] != null) {
+              final cover = await searchCovers(elem['cover_i'].toString());
+              if (cover != null) {
+                book = book.copyWith(coverImage: cover);
+              }
+            }
+
+            return book;
+          }());
+
+      final books = await Future.wait<Book>(functions);
+      return books;
     } catch (error) {
       print(error);
       return [];
@@ -34,14 +51,14 @@ class OpenLibraryService {
   }
 
   Future<String?> searchCovers(
-    String isbn, {
+    String coverID, {
     String size = 'M',
   }) async {
-    if (isbn.isEmpty) {
+    if (coverID.isEmpty) {
       return null;
     }
 
-    final uri = Uri.https('covers.openlibrary.org', 'b/isbn/$isbn-$size.jpg');
+    final uri = Uri.https('covers.openlibrary.org', 'b/id/$coverID-$size.jpg');
 
     final response = await http.get(uri);
 

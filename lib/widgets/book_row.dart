@@ -17,18 +17,21 @@ class BookRow extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(10),
-          child: book.coverImage != null
-              ? ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 100,
-                    maxHeight: 100,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 100,
+              maxHeight: 100,
+              minWidth: 100,
+              minHeight: 100,
+            ),
+            child: book.coverImage != null
+                ? Image.memory(base64Decode(book.coverImage!))
+                : Container(
+                    height: 100,
+                    width: 100,
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
                   ),
-                  child: Image.memory(base64Decode(book.coverImage!)))
-              : Container(
-                  height: 100,
-                  width: 100,
-                  color: Theme.of(context).shadowColor.withOpacity(0.1),
-                ),
+          ),
         ),
         Expanded(
           child: Column(
