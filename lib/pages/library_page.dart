@@ -18,12 +18,6 @@ class LibraryPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ABOBScaffold(
       actions: [
-        // IconButton(
-        //   onPressed: () {
-        //     showSearch(context: context, delegate: LibrarySearch(ref));
-        //   },
-        //   icon: const Icon(Icons.search),
-        // ),
         IconButton(
           onPressed: () async {
             var book =
@@ -31,13 +25,6 @@ class LibraryPage extends ConsumerWidget {
 
             if (book == null) {
               return;
-            }
-
-            final cover =
-                await ref.read(openLibraryService).searchCovers(book.isbn);
-
-            if (cover != null) {
-              book = book.copyWith(coverImage: cover);
             }
 
             ref.read(daoProvider).addBook(book);
