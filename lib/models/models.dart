@@ -39,9 +39,31 @@ class Book {
       author = 'Not found 2';
     }
 
-    final isbn = json['isbn']?.toString() ?? 'ISBN not found';
+    late String isbn;
+    dynamic isbnValues = json['isbn'];
+    if (isbnValues is List<dynamic>) {
+      isbn = isbnValues.firstOrNull?.toString() ?? '';
+    } else if (isbnValues is String) {
+      isbn = isbnValues?.toString() ?? '';
+    } else {
+      isbn = '';
+    }
 
     return Book(title: json['title'], author: author, isbn: isbn);
+  }
+
+  Book copyWith({
+    String? title,
+    String? author,
+    String? isbn,
+    String? coverImage,
+  }) {
+    return Book(
+      title: title ?? this.title,
+      author: author ?? this.author,
+      isbn: isbn ?? this.isbn,
+      coverImage: coverImage ?? this.coverImage,
+    );
   }
 }
 
