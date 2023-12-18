@@ -1,4 +1,5 @@
 import 'package:a_bunch_of_books/dao/dao.dart';
+import 'package:a_bunch_of_books/services/open_library_service.dart';
 import 'package:a_bunch_of_books/widgets/book_search.dart';
 import 'package:a_bunch_of_books/widgets/scaffold.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +26,18 @@ class LibraryPage extends ConsumerWidget {
         // ),
         IconButton(
           onPressed: () async {
-            final book =
+            var book =
                 await showSearch(context: context, delegate: BookSearch(ref));
 
             if (book == null) {
               return;
+            }
+
+            final cover =
+                await ref.read(openLibraryService).searchCovers(book.isbn);
+
+            if (cover != null) {
+              book = book.copyWith(coverImage: cover);
             }
 
             ref.read(daoProvider).addBook(book);

@@ -69,6 +69,9 @@ class DAO {
             title: Value<String>(book.title),
             author: Value<String>(book.author),
             isbn: Value<String>(book.isbn),
+            coverImage: book.coverImage != null
+                ? Value<String?>(book.coverImage)
+                : const Value.absent(),
           ),
         );
   }

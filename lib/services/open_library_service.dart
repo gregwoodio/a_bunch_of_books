@@ -32,6 +32,28 @@ class OpenLibraryService {
       return [];
     }
   }
+
+  Future<String?> searchCovers(
+    String isbn, {
+    String size = 'M',
+  }) async {
+    if (isbn.isEmpty) {
+      return null;
+    }
+
+    final uri = Uri.https('covers.openlibrary.org', 'b/isbn/$isbn-$size.jpg');
+
+    final response = await http.get(uri);
+
+    if (response == null || response.statusCode != 200) {
+      // TODO: Error handling
+      print(response.body);
+      return null;
+    }
+
+    final bytes = response.bodyBytes;
+    return base64Encode(bytes);
+  }
 }
 
 final openLibraryService = Provider.autoDispose((ref) => OpenLibraryService());
