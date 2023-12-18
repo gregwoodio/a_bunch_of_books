@@ -29,6 +29,20 @@ class Book {
     this.coverImage,
     required this.isbn,
   });
+
+  factory Book.fromMap(dynamic json) {
+    dynamic authorNames = json['author_name'];
+    late String author;
+    if (authorNames is List<dynamic>) {
+      author = authorNames.firstOrNull?.toString() ?? 'Not found';
+    } else {
+      author = 'Not found 2';
+    }
+
+    final isbn = json['isbn']?.toString() ?? 'ISBN not found';
+
+    return Book(title: json['title'], author: author, isbn: isbn);
+  }
 }
 
 class BookRead {

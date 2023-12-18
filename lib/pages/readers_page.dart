@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/models.dart';
-import '../widgets/book_search.dart';
+import '../widgets/library_search.dart';
 import '../widgets/scaffold.dart';
 
 class ReadersPage extends ConsumerWidget {
@@ -170,7 +170,7 @@ class ReadersPage extends ConsumerWidget {
   ) async {
     final book = await showSearch(
       context: context,
-      delegate: BookSearch(ref),
+      delegate: LibrarySearch(ref),
     );
 
     if (book == null) {
