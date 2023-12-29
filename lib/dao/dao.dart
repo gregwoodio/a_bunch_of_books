@@ -77,14 +77,20 @@ class DAO {
   }
 
   Future<List<models.Book>> searchBooks(String term) async {
+    final orderBy = db.book.title;
+
     if (term.isEmpty) {
-      return db.select(db.book).get().then((list) {
+      return (db.select(db.book)
+            ..orderBy([(e) => OrderingTerm(expression: orderBy)]))
+          .get()
+          .then((list) {
         return list.map(toBookModel).toList();
       });
     }
 
     final query = db.select(db.book)
-      ..where((t) => t.title.contains(term) | t.author.contains(term));
+      ..where((t) => t.title.contains(term) | t.author.contains(term))
+      ..orderBy([(e) => OrderingTerm(expression: orderBy)]);
 
     return query.map(toBookModel).get();
   }
