@@ -63,7 +63,15 @@ class DAO {
     return ctrl.stream;
   }
 
-  void addBook(models.Book book) {
+  Future<void> addBook(models.Book book) async {
+    // check ISBN does not already exist
+    final matchingISBNs = await (db.select(db.book)
+          ..where((b) => b.isbn.equals(book.isbn)))
+        .get();
+    if (matchingISBNs.isNotEmpty) {
+      return;
+    }
+
     db.into(db.book).insert(
           BookCompanion(
             title: Value<String>(book.title),

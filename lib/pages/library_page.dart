@@ -27,7 +27,7 @@ class LibraryPage extends ConsumerWidget {
               return;
             }
 
-            ref.read(daoProvider).addBook(book);
+            await ref.read(daoProvider).addBook(book);
           },
           icon: const Icon(Icons.add),
         ),
