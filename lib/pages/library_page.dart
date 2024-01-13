@@ -27,6 +27,12 @@ class LibraryPage extends ConsumerWidget {
               return;
             }
 
+            final confirmed =
+                await confirmAddBook(context: context, book: book);
+            if (!confirmed) {
+              return;
+            }
+
             await ref.read(daoProvider).addBook(book);
           },
           icon: const Icon(Icons.add),
@@ -77,5 +83,34 @@ class LibraryPage extends ConsumerWidget {
         },
       ),
     );
+  }
+
+  Future<bool> confirmAddBook({
+    required BuildContext context,
+    required Book book,
+  }) async {
+    final confirmed = await showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            content: Text('Add \'${book.title}\' to your library?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(ctx).pop(true);
+                },
+                child: const Text('Yes'),
+              ),
+            ],
+          );
+        });
+
+    return confirmed;
   }
 }
