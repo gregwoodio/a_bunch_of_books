@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:a_bunch_of_books/models/models.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class BookRow extends StatelessWidget {
   final Book book;
@@ -42,6 +43,8 @@ class BookRow extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               Text('by ${book.author}'),
+              if (book.dateRead != null)
+                Text('Read on ${DateFormat.yMMMd().format(book.dateRead!)}')
             ],
           ),
         )

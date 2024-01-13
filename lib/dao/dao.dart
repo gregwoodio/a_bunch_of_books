@@ -63,6 +63,36 @@ class DAO {
     return ctrl.stream;
   }
 
+  Stream<List<models.Book>> getBooksRead(int readerID) {
+    StreamController<List<models.Book>> ctrl =
+        StreamController<List<models.Book>>();
+
+    db
+        .customSelect(
+            'SELECT b.*, br.* from book_read br '
+            'LEFT JOIN book b ON b.id == br.book_id '
+            'WHERE br.reader_id = $readerID '
+            'ORDER BY b.title',
+            readsFrom: {
+              db.book,
+              db.bookRead,
+            })
+        .watch()
+        .listen((row) {
+          ctrl.add(row.map((data) {
+            return models.Book(
+                id: data.read<int>('book_id'),
+                author: data.read<String>('author'),
+                title: data.read<String>('title'),
+                coverImage: data.read<String?>('cover_image'),
+                isbn: data.read<String>('isbn'),
+                dateRead: DateTime.tryParse(data.read<String>('timestamp')));
+          }).toList());
+        });
+
+    return ctrl.stream;
+  }
+
   void addBook(models.Book book) {
     db.into(db.book).insert(
           BookCompanion(

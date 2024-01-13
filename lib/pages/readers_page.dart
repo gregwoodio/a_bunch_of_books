@@ -1,4 +1,5 @@
 import 'package:a_bunch_of_books/dao/dao.dart';
+import 'package:a_bunch_of_books/pages/library_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -143,7 +144,11 @@ class ReadersPage extends ConsumerWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(4),
                                   child: TextButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      ref
+                                          .read(currentReaderProvider.notifier)
+                                          .state = reader.id;
+                                    },
                                     child: const Text('Reading list'),
                                   ),
                                 ),
