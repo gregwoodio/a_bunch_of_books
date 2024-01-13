@@ -21,6 +21,7 @@ class Book {
   final String author;
   final String? coverImage;
   final String isbn;
+  final DateTime? dateRead;
 
   Book({
     this.id,
@@ -28,6 +29,7 @@ class Book {
     required this.author,
     this.coverImage,
     required this.isbn,
+    this.dateRead,
   });
 
   factory Book.fromMap(dynamic json) {

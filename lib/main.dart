@@ -1,3 +1,4 @@
+import 'package:a_bunch_of_books/dao/dao.dart';
 import 'package:a_bunch_of_books/pages/about_page.dart';
 import 'package:a_bunch_of_books/pages/app_page.dart';
 import 'package:a_bunch_of_books/pages/library_page.dart';
@@ -42,17 +43,24 @@ class _HomePage extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentReaderID = ref.watch(currentReaderProvider);
+
     Widget body;
-    switch (currentPage) {
-      case AppPage.readers:
-        body = ReadersPage();
-        break;
-      case AppPage.library:
-        body = LibraryPage();
-        break;
-      case AppPage.about:
-        body = AboutPage();
-        break;
+
+    if (currentReaderID == null) {
+      switch (currentPage) {
+        case AppPage.readers:
+          body = ReadersPage();
+          break;
+        case AppPage.library:
+          body = const LibraryPage();
+          break;
+        case AppPage.about:
+          body = AboutPage();
+          break;
+      }
+    } else {
+      body = const LibraryPage();
     }
 
     return Scaffold(
@@ -70,6 +78,9 @@ class _HomePage extends ConsumerState<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.info), label: 'About'),
         ],
         onTap: (index) {
+          // Reset current reader
+          ref.read(currentReaderProvider.notifier).state = null;
+
           switch (index) {
             case 0:
               print('Navigate to Readers');
