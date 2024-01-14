@@ -114,6 +114,34 @@ class DAO {
         );
   }
 
+  Future<void> deleteBook(models.Book book) async {
+    if (book.id == null) {
+      return;
+    }
+
+    db.delete(db.bookRead)
+      ..where((b) => b.bookId.equals(book.id!))
+      ..go();
+
+    db.delete(db.book)
+      ..where((b) => b.id.equals(book.id!))
+      ..go();
+  }
+
+  Future<void> deleteReader(models.Reader reader) async {
+    if (reader.id == null) {
+      return;
+    }
+
+    db.delete(db.bookRead)
+      ..where((b) => b.readerId.equals(reader.id!))
+      ..go();
+
+    db.delete(db.reader)
+      ..where((r) => r.id.equals(reader.id!))
+      ..go();
+  }
+
   Future<List<models.Book>> searchBooks(String term) async {
     final orderBy = db.book.title;
 
