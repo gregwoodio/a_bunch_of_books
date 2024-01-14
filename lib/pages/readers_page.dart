@@ -89,77 +89,110 @@ class ReadersPage extends ConsumerWidget {
             itemCount: readers.length,
             itemBuilder: (context, index) {
               final reader = readers[index];
-              return Row(
-                children: [
-                  reader.image == null
-                      ? Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Container(
-                            height: 100,
-                            width: 100,
-                            color: Theme.of(context).colorScheme.primary,
-                            child: Center(
-                              child: Text(
-                                reader.name.substring(0, 1),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .inversePrimary,
-                                    ),
+              return GestureDetector(
+                onLongPress: () async {
+                  final confirmed = await showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          content: Text(
+                              'Do you want to remove \'${reader.name}\'? All their progress will be removed permanently.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(ctx).pop(false);
+                              },
+                              child: const Text('No'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(ctx).pop(true);
+                              },
+                              child: const Text('Yes'),
+                            ),
+                          ],
+                        );
+                      });
+
+                  if (!confirmed) {
+                    return;
+                  }
+
+                  await ref.read(daoProvider).deleteReader(reader);
+                },
+                child: Row(
+                  children: [
+                    reader.image == null
+                        ? Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Container(
+                              height: 100,
+                              width: 100,
+                              color: Theme.of(context).colorScheme.primary,
+                              child: Center(
+                                child: Text(
+                                  reader.name.substring(0, 1),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelLarge
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary,
+                                      ),
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                      : Container(), // TODO, replace with Image.memory
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Text(reader.name),
-                          LinearProgressIndicator(
-                            value: reader.booksRead / 1000,
-                          ),
-                          Text(
-                            '${reader.booksRead} of 1000 Read',
-                            textAlign: TextAlign.right,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: TextButton(
-                                    onPressed: () async =>
-                                        await _bookRead(context, ref, reader),
-                                    child: const Text('Finished a Book'),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4),
-                                  child: TextButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(currentReaderProvider.notifier)
-                                          .state = reader.id;
-                                    },
-                                    child: const Text('Reading list'),
-                                  ),
-                                ),
-                              )
-                            ],
                           )
-                        ],
+                        : Container(), // TODO, replace with Image.memory
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(reader.name),
+                            LinearProgressIndicator(
+                              value: reader.booksRead / 1000,
+                            ),
+                            Text(
+                              '${reader.booksRead} of 1000 Read',
+                              textAlign: TextAlign.right,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: TextButton(
+                                      onPressed: () async =>
+                                          await _bookRead(context, ref, reader),
+                                      child: const Text('Finished a Book'),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: TextButton(
+                                      onPressed: () {
+                                        ref
+                                            .read(
+                                                currentReaderProvider.notifier)
+                                            .state = reader.id;
+                                      },
+                                      child: const Text('Reading list'),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           );
