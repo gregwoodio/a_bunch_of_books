@@ -72,7 +72,7 @@ class DAO {
             'SELECT b.*, br.* from book_read br '
             'LEFT JOIN book b ON b.id == br.book_id '
             'WHERE br.reader_id = $readerID '
-            'ORDER BY b.title',
+            'ORDER BY br.timestamp DESC',
             readsFrom: {
               db.book,
               db.bookRead,
